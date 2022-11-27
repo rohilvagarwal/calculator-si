@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import './styles.css';
+import { button } from './button';
 
 
 
@@ -12,9 +13,30 @@ function App()
   const [prevNum, setPrevNum] = useState(initialPrevNumState);
   const [operation, setOperation] = useState(initialOperationState);
 
-  function changeNum(num)
+  function addNum(num)
   {
-    if (num === "del")
+    if (num === ".")
+    {
+      if (!currNum.includes("."))
+      {
+        setCurrNum(currNum + num);
+      }
+    }
+
+    else if (currNum === "0")
+    {
+      setCurrNum(num);
+    }
+
+    else 
+    {
+      setCurrNum(currNum + num);
+    }
+  }
+
+  function specialNumFunctions(func)
+  {
+    if (func === "del")
     {
       if (currNum.length === 1)
       {
@@ -27,19 +49,19 @@ function App()
       }
     }
 
-    else if (num === "C")
+    else if (func === "C")
     {
       setCurrNum(initialCurrNumState);
     }
 
-    else if (num === "AC")
+    else if (func === "AC")
     {
       setCurrNum(initialCurrNumState);
       setPrevNum(initialPrevNumState);
       setOperation(initialOperationState);
     }
 
-    else if (num === "+/-")
+    else if (func === "+/-")
     {
       if (currNum === "0")
       {
@@ -61,35 +83,18 @@ function App()
         setCurrNum("-" + currNum);
       }
     }
-
-    else if (num === ".")
-    {
-      if (!currNum.includes("."))
-      {
-        setCurrNum(currNum + num);
-      }
-    }
-
-    else if (currNum === "0")
-    {
-      setCurrNum(num);
-    }
-
-    else 
-    {
-      setCurrNum(currNum + num);
-    }
   }
 
   function calculatorOperation(newOperation)
   {
     if (operation !== initialOperationState)
     {
-      calculate();
-
-      //setPrevNum(currNum);
-      //setCurrNum(initialCurrNumState);
-      return;
+      calculate(true);
+    }
+    else
+    {
+      setPrevNum(currNum);
+      setCurrNum(initialCurrNumState);
     }
 
     if (newOperation === "/")
@@ -116,12 +121,9 @@ function App()
     {
       setOperation("^");
     }
-
-    setPrevNum(currNum);
-    setCurrNum(initialCurrNumState);
   }
 
-  function calculate()
+  function calculate(fromOp)
   {
     if (operation === initialOperationState)
     {
@@ -130,32 +132,44 @@ function App()
 
     let doublePrev = parseFloat(prevNum);
     let doubleCurr = parseFloat(currNum);
+    let doubleAnswer = "";
 
     setPrevNum(initialPrevNumState);
 
     if (operation === "/")
     {
-      setCurrNum((doublePrev / doubleCurr).toString());
+      doubleAnswer = (doublePrev / doubleCurr).toString();
     }
 
     else if (operation === "x")
     {
-      setCurrNum((doublePrev * doubleCurr).toString());
+      doubleAnswer = (doublePrev * doubleCurr).toString();
     }
 
     else if (operation === "+")
     {
-      setCurrNum((doublePrev + doubleCurr).toString());
+      doubleAnswer = (doublePrev + doubleCurr).toString();
     }
 
     else if (operation === "-")
     {
-      setCurrNum((doublePrev - doubleCurr).toString());
+      doubleAnswer = (doublePrev - doubleCurr).toString();
     }
 
     else if (operation === "^")
     {
-      setCurrNum((Math.pow(doublePrev, doubleCurr)).toString());
+      doubleAnswer = (Math.pow(doublePrev, doubleCurr)).toString();
+    }
+
+    if (fromOp)
+    {
+      setPrevNum(doubleAnswer);
+      setCurrNum(initialCurrNumState);
+    }
+    else
+    {
+      setCurrNum(doubleAnswer);
+      setPrevNum(initialPrevNumState);
     }
 
     setOperation(initialOperationState);
@@ -164,37 +178,37 @@ function App()
 
 
   return (
-    <body>
-      <div class="full-calculator">
-        <div class="output">
-          <div class="previous-num">{prevNum} {operation}</div>
-          <div class="current-num">{currNum}</div>
+    <div className="bg">
+      <div className="full-calculator">
+        <div className="output">
+          <div className="previous-num">{prevNum} {operation}</div>
+          <div className="current-num">{currNum}</div>
         </div>
 
-        <button class="span-two-horizontal" onClick={() => changeNum("AC")}>AC</button>
-        <button onClick={() => changeNum("C")}>C</button>
-        <button onClick={() => calculatorOperation("/")}>/</button>
-        <button onClick={() => changeNum("del")}>del</button>
-        <button onClick={() => changeNum("+/-")}>+/-</button>
-        <button onClick={() => calculatorOperation("^")}>^</button>
-        <button onClick={() => calculatorOperation("x")}>x</button>
-        <button onClick={() => changeNum("7")}>7</button>
-        <button onClick={() => changeNum("8")}>8</button>
-        <button onClick={() => changeNum("9")}>9</button>
-        <button onClick={() => calculatorOperation("-")}>-</button>
-        <button onClick={() => changeNum("4")}>4</button>
-        <button onClick={() => changeNum("5")}>5</button>
-        <button onClick={() => changeNum("6")}>6</button>
-        <button onClick={() => calculatorOperation("+")}>+</button>
-        <button onClick={() => changeNum("1")}>1</button>
-        <button onClick={() => changeNum("2")}>2</button>
-        <button onClick={() => changeNum("3")}>3</button>
-        <button class="span-two-vertical" onClick={() => calculate()}>=</button>
-        <button class="span-two-horizontal" onClick={() => changeNum("0")}>0</button>
-        <button onClick={() => changeNum(".")}>.</button>
+        <button className="span-two-horizontal" onClick={() => specialNumFunctions("AC")}>AC</button>
+        {button(specialNumFunctions, "C")}
+        {button(calculatorOperation, "/")}
+        {button(specialNumFunctions, "del")}
+        {button(specialNumFunctions, "+/-")}
+        {button(calculatorOperation, "^")}
+        {button(calculatorOperation, "x")}
+        {button(addNum, "7")}
+        {button(addNum, "8")}
+        {button(addNum, "9")}
+        {button(calculatorOperation, "-")}
+        {button(addNum, "4")}
+        {button(addNum, "5")}
+        {button(addNum, "6")}
+        {button(calculatorOperation, "+")}
+        {button(addNum, "1")}
+        {button(addNum, "2")}
+        {button(addNum, "3")}
+        <button className="span-two-vertical" onClick={() => calculate(false)}>=</button>
+        <button className="span-two-horizontal" onClick={() => addNum("0")}>0</button>
+        {button(addNum, ".")}
       </div>
 
-    </body>
+    </div>
   );
 }
 
