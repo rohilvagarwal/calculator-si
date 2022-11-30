@@ -25,7 +25,7 @@
     padding: 2em;
     display: grid;
     grid-template-columns: repeat(4, 4em);
-    grid-template-rows: minmax(1em, auto) repeat(6, 4em);
+    grid-template-rows: minmax(7.5em, auto) repeat(6, 4em);
     justify-content: center;
 }
 
@@ -36,7 +36,7 @@ button {
 }
 
 button:hover {
-    background-color: white;
+    background-color: lightgrey;
 }
 
 .output {
@@ -55,6 +55,7 @@ button:hover {
 
 .previous-num {
     font-size: 1.2em;
+    opacity: 80%;
 }
 
 .current-num {

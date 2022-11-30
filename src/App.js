@@ -6,20 +6,41 @@ import { button } from './button';
 
 function App()
 {
-  let initialCurrNumState = "0";
-  let initialPrevNumState = "0";
+  let initialCurrNumState = "";
+  let initialPrevNumState = "";
   let initialOperationState = "";
   const [currNum, setCurrNum] = useState(initialCurrNumState);
   const [prevNum, setPrevNum] = useState(initialPrevNumState);
   const [operation, setOperation] = useState(initialOperationState);
+  const [overwrite, setOverwrite] = useState(false);
 
   function addNum(num)
   {
-    if (num === ".")
+    if (overwrite)
+    {
+      if (num === ".")
+      {
+        setCurrNum("0" + num);
+      }
+
+      else
+      {
+        setCurrNum(num);
+      }
+
+      setOverwrite(false);
+    }
+
+    else if (num === ".")
     {
       if (!currNum.includes("."))
       {
         setCurrNum(currNum + num);
+      }
+
+      if (currNum === initialCurrNumState)
+      {
+        setCurrNum("0" + num);
       }
     }
 
@@ -38,9 +59,10 @@ function App()
   {
     if (func === "del")
     {
-      if (currNum.length === 1)
+      if (overwrite || currNum.length === 1)
       {
         setCurrNum(initialCurrNumState);
+        setOverwrite(false);
       }
 
       else
@@ -170,6 +192,7 @@ function App()
     {
       setCurrNum(doubleAnswer);
       setPrevNum(initialPrevNumState);
+      setOverwrite(true);
     }
 
     setOperation(initialOperationState);
@@ -208,7 +231,7 @@ function App()
         {button(addNum, ".")}
       </div>
 
-    </div>
+    </div >
   );
 }
 
